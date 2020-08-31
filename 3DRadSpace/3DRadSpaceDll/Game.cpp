@@ -1,0 +1,88 @@
+#include "pch.h"
+#include "Game.h"
+#pragma comment(lib,"d3d11.lib")
+
+_3DRadSpaceDll::Game::Game(HWND hwnd)
+{
+	DXGI_SWAP_CHAIN_DESC SwapChain = { 0 };
+	SwapChain.Windowed = TRUE;
+	SwapChain.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+	SwapChain.BufferDesc.Width = 0;
+	SwapChain.BufferDesc.Height = 0;
+	SwapChain.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	SwapChain.BufferDesc.RefreshRate = { 0 };
+	SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_STRETCHED;
+	SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	SwapChain.SampleDesc.Count = 1;
+	SwapChain.SampleDesc.Quality = 0;
+	SwapChain.OutputWindow = hwnd;
+	SwapChain.Flags = 0;
+	SwapChain.BufferCount = 0;
+	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+
+	D3D_FEATURE_LEVEL lvls[] =
+	{
+		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
+		D3D_FEATURE_LEVEL_10_1,
+		D3D_FEATURE_LEVEL_10_0,
+		D3D_FEATURE_LEVEL_9_3,
+		D3D_FEATURE_LEVEL_9_1
+	};
+
+	try
+	{
+		HRESULT a =
+			D3D11CreateDevice(
+				nullptr, // graphics adapter
+				D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, //some enum
+				nullptr, // software
+				0, //flags
+				nullptr, //feature levels
+				0, D3D11_SDK_VERSION,
+				&(this->_device), nullptr,
+				&(this->_devicecontext)//SDK version
+			); //HOW THE FUCK DOES THIS WORK
+				
+		if (FAILED(a))
+		{
+			void* b = new wchar_t[100];
+			LPCWSTR err = L"Failed to create D3D11Device and Swap chain. \n %02X";
+			LPWSTR res = reinterpret_cast<LPWSTR>(b);
+			wsprintfW(res, err, a);
+			MessageBox(nullptr, res, L"Fatal error!", MB_OK | MB_ICONERROR);
+			delete[] b;
+		}
+	}
+	catch (...)
+	{
+		OutputDebugString(L"Failed to initialize D3D11DEVICE :(");
+	}
+}
+
+void _3DRadSpaceDll::Game::Draw()
+{
+}
+
+void _3DRadSpaceDll::Game::Update()
+{
+}
+
+ID3D11Device* _3DRadSpaceDll::Game::GetDevice()
+{
+	return _device;
+}
+
+IDXGISwapChain* _3DRadSpaceDll::Game::GetSwapChain()
+{
+	return _swapchain;
+}
+
+ID3D11DeviceContext* _3DRadSpaceDll::Game::GetDeviceContext()
+{
+	return _devicecontext;
+}
+
+_3DRadSpaceDll::Game::~Game()
+{
+}

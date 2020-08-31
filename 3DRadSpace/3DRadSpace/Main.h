@@ -1,5 +1,7 @@
 #pragma once
 #include <windows.h>
-#include <d3d11.h>
+#include "3DRadSpaceDll_h/Game.h"
+#include "resource.h"
 
 extern HWND MainWindow;
+extern _3DRadSpaceDll::Game *Game;
