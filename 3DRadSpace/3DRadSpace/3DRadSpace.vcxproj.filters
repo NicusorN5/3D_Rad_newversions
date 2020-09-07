@@ -36,5 +36,8 @@
     <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Debug-Button.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -152,6 +152,7 @@
     <ResourceCompile Include="3DRadSpace.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Debug-Button.png" />
     <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Icon.ico" />
   </ItemGroup>
   <ItemGroup>

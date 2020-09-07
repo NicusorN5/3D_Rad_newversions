@@ -4,6 +4,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND MainWindow;
 _3DRadSpaceDll::Game *Game;
+LPRECT WindowSize = nullptr;
 
 #define MENUF_NEWPROJ 1
 #define MENUF_OPENPROJ 2
@@ -27,6 +28,11 @@ _3DRadSpaceDll::Game *Game;
 #define MENUH_FORUM 17
 #define MENUH_REPORTBUG 18
 
+bool Wopen = true;
+
+#define TOOLB_SW2D 19
+#define TOOLB_DEBUG 20
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
 {
 	LPCWSTR className = L"3DRSP_MAIN";
@@ -41,6 +47,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     HMENU MenuEdit = CreateMenu();
     HMENU MenuOptions = CreateMenu();
     HMENU MenuHelp = CreateMenu();
+
+    HWND hToolbar = nullptr;
 
     //File -> ...
 
@@ -77,6 +85,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 
     MainWindow = CreateWindowW(className, L"3DRadSpace", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, MMenu, hInstance, nullptr);
 
+    hToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, WS_CHILD | TBSTYLE_WRAPABLE, 0, 0, 0, 0, MainWindow, nullptr, hInstance, nullptr);
+    
+    TBBUTTON buttons[1] = {
+
+    };
+
     if (MainWindow == nullptr)
     {
         MessageBox(nullptr, L"Failed to open the window!", L"Fatal error!", MB_OK | MB_ICONERROR);
@@ -84,15 +98,46 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     }
 
     ShowWindow(MainWindow, 3);
+    ShowWindow(hToolbar, 1);
     
     Game = new _3DRadSpaceDll::Game(MainWindow);
     
     MSG msg = { 0 };
 
-    while (GetMessage(&msg, nullptr, 0, 0))
+    ID3D11Device* Device = Game->GetDevice();
+    IDXGISwapChain* SwapChain = Game->GetSwapChain();
+    ID3D11DeviceContext* DeviceContext = Game->GetDeviceContext();
+
+    ID3D11RenderTargetView* renderTarget;
+    ID3D11Asynchronous* _async = nullptr;
+ 
+    ID3D11Texture2D* BackBuffer = nullptr;
+    SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
+    Device->CreateRenderTargetView(BackBuffer, nullptr, &renderTarget);
+    BackBuffer->Release();
+    DeviceContext->OMSetRenderTargets(1, &renderTarget, nullptr);
+
+    D3D11_VIEWPORT Viewport;
+    memset(&Viewport, 0, sizeof(D3D11_VIEWPORT));
+    Viewport.TopLeftX = 0;
+    Viewport.TopLeftY = 25;
+    Viewport.Width = 800;
+    Viewport.Height = 600;
+    DeviceContext->RSSetViewports(1, &Viewport);
+
+    float ClearColor[4] = { 0,0,0,1 };
+
+    //GetWindowRect(MainWindow, WindowSize);
+
+    while (Wopen)
     {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DeviceContext->ClearRenderTargetView(renderTarget, ClearColor);
+        SwapChain->Present(1,0);
+        while (PeekMessage(&msg, nullptr, 0, 0,1))
+        {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
     }
 
     return 1;
@@ -104,6 +149,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
     case WM_DESTROY:
         PostQuitMessage(0);
+        Wopen = false;
         return 0;
 
     case WM_PAINT:
@@ -195,7 +241,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case MENUF_COMPILE:
             break;
         case MENUF_EXIT:
+            Wopen = false;
             exit(0);
+        case MENUE_ADDOBJ:
+            break;
+        case MENUE_ADDADD:
+            break;
+        case MENUE_IMPORTRES:
+            break;
+        case MENUE_RESETCURSOR:
+            break;
+        case MENUO_SETTINGS:
+            break;
+        case MENUO_CHECKFORUPDATE:
+            break;
+
         //Edit -> ...
             
         default: break;

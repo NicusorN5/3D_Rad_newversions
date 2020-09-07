@@ -4,20 +4,27 @@
 
 _3DRadSpaceDll::Game::Game(HWND hwnd)
 {
-	DXGI_SWAP_CHAIN_DESC SwapChain = { 0 };
+
+	_device = nullptr;
+	_swapchain = nullptr;
+	_devicecontext = nullptr;
+
+	DXGI_SWAP_CHAIN_DESC SwapChain;
+	memset(&SwapChain, 0, sizeof(SwapChain));
 	SwapChain.Windowed = TRUE;
-	SwapChain.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
-	SwapChain.BufferDesc.Width = 0;
-	SwapChain.BufferDesc.Height = 0;
+	//SwapChain.SwapEffect = DXGI_SWAP_EFFECT::DXGI_SWAP_EFFECT_DISCARD;
+	SwapChain.BufferDesc.Width = 800;
+	SwapChain.BufferDesc.Height = 600;
 	SwapChain.BufferDesc.Format = DXGI_FORMAT::DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	SwapChain.BufferDesc.RefreshRate = { 0 };
+	SwapChain.BufferDesc.RefreshRate.Denominator = 60;
+	SwapChain.BufferDesc.RefreshRate.Numerator = 1;
 	SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING::DXGI_MODE_SCALING_STRETCHED;
-	SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+	//SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	SwapChain.SampleDesc.Count = 1;
 	SwapChain.SampleDesc.Quality = 0;
 	SwapChain.OutputWindow = hwnd;
 	SwapChain.Flags = 0;
-	SwapChain.BufferCount = 0;
+	SwapChain.BufferCount = 1;
 	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 
 	D3D_FEATURE_LEVEL lvls[] =
@@ -32,6 +39,7 @@ _3DRadSpaceDll::Game::Game(HWND hwnd)
 
 	try
 	{
+		/*
 		HRESULT a =
 			D3D11CreateDevice(
 				nullptr, // graphics adapter
@@ -43,7 +51,22 @@ _3DRadSpaceDll::Game::Game(HWND hwnd)
 				&(this->_device), nullptr,
 				&(this->_devicecontext)//SDK version
 			); //HOW THE FUCK DOES THIS WORK
-				
+		*/
+		HRESULT a = D3D11CreateDeviceAndSwapChain(
+			nullptr, //adapter,
+			D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE,
+			nullptr,
+			0,
+			nullptr,
+			0,
+			D3D11_SDK_VERSION,
+			&SwapChain,
+			&_swapchain,
+			&_device,
+			nullptr,
+			&_devicecontext
+		);
+		
 		if (FAILED(a))
 		{
 			void* b = new wchar_t[100];
