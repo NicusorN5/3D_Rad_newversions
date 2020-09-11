@@ -23,9 +23,7 @@ float _3DRadSpaceDll::Vector3::LengthSquared(Vector3* v)
 
 void _3DRadSpaceDll::Vector3::Normalize()
 {
-    X /= Length();
-    Y /= Length();
-    Z /= Length();
+    (*this) /= this->Length();
 }
 
 _3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::Normalize(Vector3 *v)
@@ -105,6 +103,26 @@ _3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator-(const Vector3& v)
 _3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator-=(const Vector3& v)
 {
     return Vector3(X - v.X, Y - v.Y, Z - v.Z);
+}
+
+_3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator*(const float& s)
+{
+    return Vector3(X*s,Y*s,Z*s);
+}
+
+_3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator*=(const float& s)
+{
+    return Vector3(X * s, Y * s, Z * s);
+}
+
+_3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator/(const float& s)
+{
+    return Vector3(X * s, Y * s, Z * s);
+}
+
+_3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator/=(const float& s)
+{
+    return Vector3();
 }
 
 _3DRadSpaceDll::Vector3 _3DRadSpaceDll::Vector3::operator+()

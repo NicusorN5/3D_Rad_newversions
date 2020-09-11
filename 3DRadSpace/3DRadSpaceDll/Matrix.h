@@ -1,4 +1,6 @@
 #include "Vector3.h"
+#include <DirectXMath.h>
+#include <exception>
 #pragma once
 
 namespace _3DRadSpaceDll
@@ -24,6 +26,7 @@ namespace _3DRadSpaceDll
 		static float Determinant(Matrix* m);
 
 		Matrix CreateLookAt(Vector3* CameraPos,Vector3* CameraLookAt,Vector3* Up);
+		Matrix CreateProjectionFieldOfView(float FOVradians, float aspect_ratio, float nearPlaneD, float farPlaneD);
 		Matrix CreateTranslation(Vector3* tr);
 		Matrix CreateRotationX(float radians);
 		Matrix CreateRotationY(float radians);

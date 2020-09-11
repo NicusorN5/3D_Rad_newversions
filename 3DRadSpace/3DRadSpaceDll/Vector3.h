@@ -39,6 +39,11 @@ namespace _3DRadSpaceDll
 		Vector3 operator -(const Vector3& v);
 		Vector3 operator -=(const Vector3& v);
 
+		Vector3 operator *(const float& s);
+		Vector3 operator *=(const float& s);
+		Vector3 operator /(const float& s);
+		Vector3 operator /=(const float& s);
+
 		Vector3 operator+();
 		Vector3 operator-();
 	};

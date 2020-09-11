@@ -59,6 +59,41 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateLookAt(Vector3* CameraPos, 
     return result;
 }
 
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateProjectionFieldOfView(float FOVradians, float aspect_ratio, float nearPlaneD, float farPlaneD)
+{
+    Matrix r;
+    //error checking
+    if ((FOVradians <= 0.0f) || (FOVradians >= 3.141593f))
+    {
+        throw std::exception("FOVRadians <= 0 or FOVRadians >= PI (out of range)");
+    }
+    if (nearPlaneD <= 0.0f)
+    {
+        throw std::exception("nearPlaneDistance <= 0");
+    }
+    if (farPlaneD <= 0.0f)
+    {
+        throw std::exception("farPlaneDistance <= 0");
+    }
+    if (nearPlaneD >= farPlaneD)
+    {
+        throw std::exception("nearPlaneDistance >= farPlaneDistance");
+    }
+    //create matrix
+    float num = 1.0f / ((float)tanf((double)(FOVradians * 0.5f)));
+    float num9 = num / aspect_ratio;
+    r.M11 = num9;
+    r.M12 = r.M13 = r.M14 = 0;
+    r.M22 = num;
+    r.M21 = r.M23 = r.M24 = 0;
+    r.M31 = r.M32 = 0.0f;
+    r.M33 = farPlaneD / (nearPlaneD - farPlaneD);
+    r.M34 = -1;
+    r.M41 = r.M42 = r.M44 = 0;
+    r.M43 = (nearPlaneD * farPlaneD) / (nearPlaneD - farPlaneD);
+    return r;
+}
+
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateTranslation(Vector3* tr)
 {
     Matrix r;
