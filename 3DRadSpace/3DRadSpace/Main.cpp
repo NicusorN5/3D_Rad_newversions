@@ -3,6 +3,7 @@
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 HWND MainWindow;
+HWND DrawWindow;
 _3DRadSpaceDll::Game *Game;
 LPRECT WindowSize = nullptr;
 
@@ -33,7 +34,7 @@ bool Wopen = true;
 #define TOOLB_SW2D 19
 #define TOOLB_DEBUG 20
 
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd)
+int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
 	LPCWSTR className = L"3DRSP_MAIN";
 	WNDCLASS WindowClass = { 0 };
@@ -41,6 +42,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	WindowClass.hInstance = hInstance;
 	WindowClass.lpfnWndProc = WindowProc;
     WindowClass.hIcon = static_cast<HICON>(LoadIcon(hInstance,MAKEINTRESOURCE(IDI_ICON1)));
+    RegisterClass(&WindowClass);
+
+    LPCWSTR DrwClassName = L"DRAWWINDOW";
+    WNDCLASS DrwWindow = { 0 };
+    DrwWindow.lpszClassName = DrwClassName;
+    DrwWindow.hInstance = hInstance;
+    DrwWindow.lpfnWndProc = DefWindowProc;
+    DrwWindow.hIcon = static_cast<HICON>(LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON1)));
+    RegisterClass(&DrwWindow);
 
     HMENU MMenu = CreateMenu();
     HMENU MenuFile = CreateMenu();
@@ -49,6 +59,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     HMENU MenuHelp = CreateMenu();
 
     HWND hToolbar = nullptr;
+    HWND hObjectsList = nullptr;
 
     //File -> ...
 
@@ -80,29 +91,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     AppendMenu(MenuHelp, MF_STRING, MENUH_FORUM, L"Forum");
     AppendMenu(MenuHelp, MF_STRING, MENUH_REPORTBUG, L"Report a bug...");
     AppendMenu(MMenu, MF_POPUP, (UINT_PTR)MenuHelp, L"Help");
-    
-    RegisterClass(&WindowClass);
 
     MainWindow = CreateWindowW(className, L"3DRadSpace", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, MMenu, hInstance, nullptr);
-
-    hToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, WS_CHILD | TBSTYLE_WRAPABLE, 0, 0, 0, 0, MainWindow, nullptr, hInstance, nullptr);
-    
-    TBBUTTON buttons[1] = {
-
-    };
-
+    //GetWindowRect(MainWindow, WindowSize);
+    DrawWindow = CreateWindow(DrwClassName, L"Drawn", WS_CHILD , 50, 55, 800, 600, MainWindow, nullptr, hInstance, nullptr);
+    hObjectsList = CreateWindow(WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE, 0, 5, 150, 600, MainWindow, nullptr, hInstance, nullptr);
     if (MainWindow == nullptr)
     {
         MessageBox(nullptr, L"Failed to open the window!", L"Fatal error!", MB_OK | MB_ICONERROR);
         return 1;
     }
 
+
     ShowWindow(MainWindow, 3);
-    ShowWindow(hToolbar, 1);
-    
-    Game = new _3DRadSpaceDll::Game(MainWindow);
-    
-    MSG msg = { 0 };
+    ShowWindow(DrawWindow, 3);
+
+    Game = new _3DRadSpaceDll::Game(DrawWindow);
 
     ID3D11Device* Device = Game->GetDevice();
     IDXGISwapChain* SwapChain = Game->GetSwapChain();
@@ -120,7 +124,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     D3D11_VIEWPORT Viewport;
     memset(&Viewport, 0, sizeof(D3D11_VIEWPORT));
     Viewport.TopLeftX = 0;
-    Viewport.TopLeftY = 25;
+    Viewport.TopLeftY = 50;
     Viewport.Width = 800;
     Viewport.Height = 600;
     DeviceContext->RSSetViewports(1, &Viewport);
@@ -128,16 +132,23 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
     float ClearColor[4] = { 0,0,0,1 };
 
     //GetWindowRect(MainWindow, WindowSize);
+    if (renderTarget == nullptr)
+    {
+        MessageBox(nullptr, L"Cannot create render target.", L"Fatal error!", MB_ICONERROR | MB_OK);
+        return 1;
+    }
+    
 
+    MSG msg = { 0 };
     while (Wopen)
     {
-        DeviceContext->ClearRenderTargetView(renderTarget, ClearColor);
-        SwapChain->Present(1,0);
         while (PeekMessage(&msg, nullptr, 0, 0,1))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        DeviceContext->ClearRenderTargetView(renderTarget, ClearColor);
+        SwapChain->Present(1, 0);
     }
 
     return 1;

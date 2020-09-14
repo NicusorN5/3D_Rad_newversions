@@ -33,13 +33,13 @@ float _3DRadSpaceDll::Matrix::Determinant(Matrix* m)
     return m->Determinant();
 }
 
-_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateLookAt(Vector3* CameraPos, Vector3* CameraTarget, Vector3* Up)
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateLookAt(const Vector3& CameraPos, const Vector3& CameraLookAt, const Vector3& Up)
 {
     Matrix result;
-    Vector3 a = *CameraPos - (*CameraTarget);
-    Vector3 vector = Vector3::Normalize(&a);
-    Vector3 vector2 = Vector3::Normalize(&(Vector3::Cross(Up, &vector)));
-    Vector3 vector3 = Vector3::Cross(&vector, &vector2);
+    Vector3 a = CameraPos - CameraLookAt;
+    Vector3 vector = Vector3::Normalize(a);
+    Vector3 vector2 = Vector3::Normalize(Vector3::Cross(Up, vector));
+    Vector3 vector3 = Vector3::Cross(vector, vector2);
     result.M11 = vector2.X;
     result.M12 = vector3.X;
     result.M13 = vector.X;
@@ -52,9 +52,9 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateLookAt(Vector3* CameraPos, 
     result.M32 = vector3.Z;
     result.M33 = vector.Z;
     result.M34 = 0;
-    result.M41 = -Vector3::Dot(&vector2, CameraPos);
-    result.M42 = -Vector3::Dot(&vector3, CameraPos);
-    result.M43 = -Vector3::Dot(&vector, CameraPos);
+    result.M41 = -Vector3::Dot(vector2, CameraPos);
+    result.M42 = -Vector3::Dot(vector3, CameraPos);
+    result.M43 = -Vector3::Dot(vector, CameraPos);
     result.M44 = 1;
     return result;
 }
@@ -80,7 +80,7 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateProjectionFieldOfView(float
         throw std::exception("nearPlaneDistance >= farPlaneDistance");
     }
     //create matrix
-    float num = 1.0f / ((float)tanf((double)(FOVradians * 0.5f)));
+    float num = 1.0f / (tanf(FOVradians * 0.5f));
     float num9 = num / aspect_ratio;
     r.M11 = num9;
     r.M12 = r.M13 = r.M14 = 0;
@@ -94,12 +94,12 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateProjectionFieldOfView(float
     return r;
 }
 
-_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateTranslation(Vector3* tr)
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateTranslation(const Vector3 &tr)
 {
     Matrix r;
-    r.M41 = tr->X;
-    r.M42 = tr->Y;
-    r.M43 = tr->Z;
+    r.M41 = tr.X;
+    r.M42 = tr.Y;
+    r.M43 = tr.Z;
     return r;
 }
 
@@ -125,12 +125,12 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateScale(float scalar)
     return a;
 }
 
-_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateScale(Vector3* scale)
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateScale(const Vector3 &scale)
 {
     Matrix a;
-    a.M11 = scale->X;
-    a.M22 = scale->Y;
-    a.M33 = scale->Z;
+    a.M11 = scale.X;
+    a.M22 = scale.Y;
+    a.M33 = scale.Z;
     return a;
 }
 

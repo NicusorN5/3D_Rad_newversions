@@ -1,7 +1,10 @@
 #pragma once
 #include <math.h>
+#include <DirectXMath.h>
+#include "Matrix.h"
 namespace _3DRadSpaceDll
 {
+	struct __declspec(dllexport) Matrix;
 	struct __declspec(dllexport) Vector3
 	{
 		float X;
@@ -13,38 +16,44 @@ namespace _3DRadSpaceDll
 		Vector3(float f) : X(f), Y(f), Z(f) {};
 		Vector3(float x, float y) : X(x), Y(y), Z(0) {};
 
-		float Length();
-		static float Length(Vector3* v);
+		float Length(void);
+		static float Length(const Vector3 &v);
 
 		float LengthSquared();
-		static float LengthSquared(Vector3* v);
+		static float LengthSquared(const Vector3 &v);
 		
 		void Normalize();
-		static Vector3 Normalize(Vector3 *v);
+		static Vector3 Normalize(const Vector3 &v);
 	
-		float Dot(Vector3* v);
-		static float Dot(Vector3* a,Vector3* b);
+		float Dot(const Vector3 &v);
+		static float Dot(const Vector3 &a,const Vector3 &b);
 
-		void Cross(Vector3* v);
-		static Vector3 Cross(Vector3* a, Vector3* b);
+		void Cross(const Vector3 &v);
+		static Vector3 Cross(const Vector3 &a, const Vector3 &b);
 
-		float Distance(Vector3* v);
-		static float Distance(Vector3* a, Vector3* b);
+		float Distance(const Vector3 &v);
+		static float Distance(const Vector3 &a, const Vector3 &b);
 
-		float DistanceSquared(Vector3* v);
-		static float DistanceSquared(Vector3* a, Vector3* b);
+		float DistanceSquared(const Vector3 &v);
+		static float DistanceSquared(const Vector3 &a, const Vector3 &b);
 
-		Vector3 operator +(const Vector3& v);
-		Vector3 operator +=(const Vector3& v);
-		Vector3 operator -(const Vector3& v);
-		Vector3 operator -=(const Vector3& v);
+		const Vector3& operator +(const Vector3& v) const;
+		const Vector3& operator +=(const Vector3& v) const;
+		const Vector3& operator -(const Vector3& v)const ;
+		const Vector3& operator -=(const Vector3& v) const;
 
-		Vector3 operator *(const float& s);
-		Vector3 operator *=(const float& s);
-		Vector3 operator /(const float& s);
-		Vector3 operator /=(const float& s);
+		const Vector3& operator *(const float& s) const;
+		const Vector3& operator *=(const float& s) const;
+		const Vector3& operator /(const float& s) const;
+		const Vector3& operator /=(const float& s) const;
 
-		Vector3 operator+();
-		Vector3 operator-();
+		const Vector3& operator+() const;
+		const Vector3& operator-() const;
+
+		operator DirectX::XMVECTORF32();
+
+		void Transform(const Matrix &m);
+
+		const Vector3& operator =(const Vector3& v) const;
 	};
 }
