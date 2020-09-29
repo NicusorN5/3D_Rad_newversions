@@ -5,34 +5,12 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 HWND MainWindow;
 HWND DrawWindow;
 _3DRadSpaceDll::Game *Game;
-LPRECT WindowSize = nullptr;
-
-#define MENUF_NEWPROJ 1
-#define MENUF_OPENPROJ 2
-#define MENUF_SAVEPROJ 3
-#define MENUF_SAVEPROJAS 4
-#define MENUF_PLAY 5
-#define MENUF_COMPILE 6
-#define MENUF_EXIT 7
-
-#define MENUE_ADDOBJ 8
-#define MENUE_ADDADD 9
-#define MENUE_IMPORTRES 10
-#define MENUE_RESETCURSOR 11
-
-#define MENUO_SETTINGS 12
-#define MENUO_CHECKFORUPDATE 13
-
-#define MENUH_ABOUT 14
-#define MENUH_DOCS 15
-#define MENUH_WEBSITE 16
-#define MENUH_FORUM 17
-#define MENUH_REPORTBUG 18
 
 bool Wopen = true;
 
-#define TOOLB_SW2D 19
-#define TOOLB_DEBUG 20
+HBRUSH window_color_brush = nullptr;
+HWND hObjectsList = nullptr;
+HWND hToolbar = nullptr;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
@@ -59,7 +37,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     HMENU MenuHelp = CreateMenu();
 
     HWND hToolbar = nullptr;
-    HWND hObjectsList = nullptr;
+
+    window_color_brush = CreateSolidBrush(RGB(128, 128, 128));
 
     //File -> ...
 
@@ -94,17 +73,53 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
     MainWindow = CreateWindowW(className, L"3DRadSpace", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, nullptr, MMenu, hInstance, nullptr);
     //GetWindowRect(MainWindow, WindowSize);
-    DrawWindow = CreateWindow(DrwClassName, L"Drawn", WS_CHILD , 50, 55, 800, 600, MainWindow, nullptr, hInstance, nullptr);
-    hObjectsList = CreateWindow(WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE, 0, 5, 150, 600, MainWindow, nullptr, hInstance, nullptr);
+    DrawWindow = CreateWindow(DrwClassName, L"3D View", WS_CHILD  , 150, 55, 800, 600, MainWindow, nullptr, hInstance, nullptr);
+    hObjectsList = CreateWindow(WC_LISTVIEW, L"", WS_CHILD | WS_VISIBLE, 0, 0, 150, 600, MainWindow, nullptr, hInstance, nullptr);
     if (MainWindow == nullptr)
     {
         MessageBox(nullptr, L"Failed to open the window!", L"Fatal error!", MB_OK | MB_ICONERROR);
         return 1;
     }
+    hToolbar = CreateWindowEx(0, TOOLBARCLASSNAME, nullptr, WS_CHILD | TBSTYLE_LIST, 0, 0, 0, 0, MainWindow, nullptr, hInstance, nullptr);
 
+    if (hToolbar == nullptr)
+    {
+        MessageBox(nullptr, L"Failed to create the toolbar", L"Error", MB_ICONERROR | MB_OK);
+        return 1;
+    }
+
+    HIMAGELIST imgToolbarList = ImageList_Create(16, 16, ILC_COLOR32 | ILC_MASK, 6, 2);
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON4)));
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON2)));
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON3)));
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON5)));
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON6)));
+    ImageList_AddIcon(imgToolbarList, LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON7)));
+
+    SendMessage(hToolbar, TB_SETIMAGELIST, (WPARAM)0, (WPARAM)imgToolbarList);
+
+    TBBUTTON tbButtons[6] =
+    {
+        { 0,MENUF_NEWPROJ ,  TBSTATE_ENABLED, BTNS_SHOWTEXT | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"New" },
+        { 1, MENUF_OPENPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Open"},
+        { 2, MENUF_SAVEPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Save"},
+        { 3, MENUF_PLAY, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Play"},
+        { 4, MENUF_SAVEPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Compile"},
+        { 5, TOOLB_SW2D, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Switch 2D/3D"}
+    };
+
+    SendMessage(hToolbar, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
+    SendMessage(hToolbar, TB_ADDBUTTONS, (WPARAM)6, (LPARAM)&tbButtons);
+
+    SendMessage(hToolbar, TB_AUTOSIZE, 0, 0);
 
     ShowWindow(MainWindow, 3);
-    ShowWindow(DrawWindow, 3);
+    ShowWindow(DrawWindow, 1);
+
+    //SendMessage(hToolbar, TB_AUTOSIZE, 0, 0);
+    ShowWindow(hToolbar, 3);
+    
+    ResizeWindow();
 
     Game = new _3DRadSpaceDll::Game(DrawWindow);
 
@@ -117,37 +132,106 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
  
     ID3D11Texture2D* BackBuffer = nullptr;
     SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&BackBuffer);
+    if (BackBuffer == nullptr)
+    {
+        MessageBox(nullptr, L"Failed to create the backbuffer texture", L"Fatal error.", MB_OK | MB_ICONERROR);
+        return 1;
+    }
     Device->CreateRenderTargetView(BackBuffer, nullptr, &renderTarget);
     BackBuffer->Release();
-    DeviceContext->OMSetRenderTargets(1, &renderTarget, nullptr);
+
+    ID3D11Texture2D* DepthStencilTexture = nullptr;
+    D3D11_TEXTURE2D_DESC descDepth;
+    descDepth.Width = 800;
+    descDepth.Height = 600;
+    descDepth.MipLevels = 1;
+    descDepth.ArraySize = 1;
+    descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+    descDepth.SampleDesc.Count = 1;
+    descDepth.SampleDesc.Quality = 0;
+    descDepth.Usage = D3D11_USAGE_DEFAULT;
+    descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    descDepth.CPUAccessFlags = 0;
+    descDepth.MiscFlags = 0;
+
+    Device->CreateTexture2D(&descDepth, nullptr, &DepthStencilTexture);
+    if (DepthStencilTexture == nullptr)
+    {
+        MessageBox(nullptr, L"Failed to create the depth stencil texture", L"Fatal error", MB_ICONERROR | MB_OK);
+        return 1;
+    }
+
+
+    D3D11_DEPTH_STENCIL_DESC stencilDesc = { 0 };
+    stencilDesc.DepthEnable = true;
+    stencilDesc.StencilWriteMask = 0xFF;
+    stencilDesc.StencilReadMask = 0xFF;
+
+    stencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    stencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    stencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    stencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+    stencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    stencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    stencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    stencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+    ID3D11DepthStencilState* pDSState;
+    Device->CreateDepthStencilState(&stencilDesc, &pDSState);
+
+    DeviceContext->OMSetDepthStencilState(pDSState, 1);
+
+    D3D11_DEPTH_STENCIL_VIEW_DESC DepthViewDesc;
+    DepthViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+    DepthViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    DepthViewDesc.Texture2D.MipSlice = 0;
+
+    ID3D11DepthStencilView* DepthStencilView;
+    Device->CreateDepthStencilView(DepthStencilTexture, &DepthViewDesc, &DepthStencilView);
+
+    DeviceContext->OMSetRenderTargets(1, &renderTarget, DepthStencilView);
 
     D3D11_VIEWPORT Viewport;
     memset(&Viewport, 0, sizeof(D3D11_VIEWPORT));
     Viewport.TopLeftX = 0;
-    Viewport.TopLeftY = 50;
+    Viewport.TopLeftY = 0;
     Viewport.Width = 800;
     Viewport.Height = 600;
     DeviceContext->RSSetViewports(1, &Viewport);
 
     float ClearColor[4] = { 0,0,0,1 };
 
-    //GetWindowRect(MainWindow, WindowSize);
     if (renderTarget == nullptr)
     {
         MessageBox(nullptr, L"Cannot create render target.", L"Fatal error!", MB_ICONERROR | MB_OK);
         return 1;
     }
     
+    D3D11_QUERY_DESC queryDesc;
+    ZeroMemory(&queryDesc, sizeof(D3D11_QUERY_DESC));
+    ID3D11Query* query = nullptr;
+    Device->CreateQuery(&queryDesc,&query);
+    if (query == nullptr)
+    {
+        MessageBox(nullptr, L"Failed to create the ID3D11Query instance", L"Fatal error", MB_OK | MB_ICONERROR);
+        return 1;
+    }
 
     MSG msg = { 0 };
     while (Wopen)
     {
-        while (PeekMessage(&msg, nullptr, 0, 0,1))
+        while (PeekMessage(&msg, nullptr, 0, 0, 1))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
+        //DeviceContext->Begin(query);
         DeviceContext->ClearRenderTargetView(renderTarget, ClearColor);
+        
+        
+        
+        //DeviceContext->End(query);
         SwapChain->Present(1, 0);
     }
 
@@ -167,8 +251,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         PAINTSTRUCT ps;
         HDC hdc = BeginPaint(hwnd, &ps);
-        FillRect(hdc, &ps.rcPaint, (HBRUSH)(COLOR_WINDOW ));
-
+        FillRect(hdc, &ps.rcPaint, window_color_brush);
         EndPaint(hwnd, &ps);
         break;
     }
@@ -221,6 +304,11 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         POINTS point = MAKEPOINTS(lParam);
         break;
     }
+    case WM_SIZE:
+    {
+        ResizeWindow();
+        break;
+    }
     case WM_MOUSEWHEEL:
     {
         POINTS pt = MAKEPOINTS(lParam);
@@ -233,6 +321,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
 
         }
+        break;
     }
     case WM_COMMAND:
     {
@@ -275,6 +364,17 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 
     }
-    
     return DefWindowProcW(hwnd, uMsg, wParam, lParam);
+}
+
+void ResizeWindow()
+{
+    RECT wr = { 0 };
+    GetWindowRect(MainWindow, &wr);
+    //todo: resize other controls
+    int width = wr.right - wr.left;
+    int height = wr.bottom - wr.top;
+    SetWindowPos(hObjectsList, (HWND)0, 0, 29, 150, height - 25, SWP_SHOWWINDOW);
+    SetWindowPos(DrawWindow, (HWND)0, 150, 29, width - 150, height, SWP_SHOWWINDOW);
+    SetWindowPos(hToolbar, (HWND)0, 0, 0, width, 30, SWP_SHOWWINDOW);
 }

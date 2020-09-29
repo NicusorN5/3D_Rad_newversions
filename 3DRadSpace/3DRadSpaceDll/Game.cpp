@@ -39,19 +39,6 @@ _3DRadSpaceDll::Game::Game(HWND hwnd)
 
 	try
 	{
-		/*
-		HRESULT a =
-			D3D11CreateDevice(
-				nullptr, // graphics adapter
-				D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, //some enum
-				nullptr, // software
-				0, //flags
-				nullptr, //feature levels
-				0, D3D11_SDK_VERSION,
-				&(this->_device), nullptr,
-				&(this->_devicecontext)//SDK version
-			); //HOW THE FUCK DOES THIS WORK
-		*/
 		HRESULT a = D3D11CreateDeviceAndSwapChain(
 			nullptr, //adapter,
 			D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE,

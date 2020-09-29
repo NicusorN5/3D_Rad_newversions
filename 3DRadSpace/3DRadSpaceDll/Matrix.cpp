@@ -28,6 +28,66 @@ float _3DRadSpaceDll::Matrix::Determinant()
     return ((((num22 * (((num11 * num18) - (num10 * num17)) + (num9 * num16))) - (num21 * (((num12 * num18) - (num10 * num15)) + (num9 * num14)))) + (num20 * (((num12 * num17) - (num11 * num15)) + (num9 * num13)))) - (num19 * (((num12 * num16) - (num11 * num14)) + (num10 * num13))));
 }
 
+void _3DRadSpaceDll::Matrix::Invert()
+{
+    float num1 = M11;
+    float num2 = M12;
+    float num3 = M13;
+    float num4 = M14;
+    float num5 = M21;
+    float num6 = M22;
+    float num7 = M23;
+    float num8 = M24;
+    float num9 = M31;
+    float num10 = M32;
+    float num11 = M33;
+    float num12 = M34;
+    float num13 = M41;
+    float num14 = M42;
+    float num15 = M43;
+    float num16 = M44;
+    float num17 = (float)((double)num11 * (double)num16 - (double)num12 * (double)num15);
+    float num18 = (float)((double)num10 * (double)num16 - (double)num12 * (double)num14);
+    float num19 = (float)((double)num10 * (double)num15 - (double)num11 * (double)num14);
+    float num20 = (float)((double)num9 * (double)num16 - (double)num12 * (double)num13);
+    float num21 = (float)((double)num9 * (double)num15 - (double)num11 * (double)num13);
+    float num22 = (float)((double)num9 * (double)num14 - (double)num10 * (double)num13);
+    float num23 = (float)((double)num6 * (double)num17 - (double)num7 * (double)num18 + (double)num8 * (double)num19);
+    float num24 = (float)-((double)num5 * (double)num17 - (double)num7 * (double)num20 + (double)num8 * (double)num21);
+    float num25 = (float)((double)num5 * (double)num18 - (double)num6 * (double)num20 + (double)num8 * (double)num22);
+    float num26 = (float)-((double)num5 * (double)num19 - (double)num6 * (double)num21 + (double)num7 * (double)num22);
+    float num27 = (float)(1.0 / ((double)num1 * (double)num23 + (double)num2 * (double)num24 + (double)num3 * (double)num25 + (double)num4 * (double)num26));
+
+    M11 = num23 * num27;
+    M21 = num24 * num27;
+    M31 = num25 * num27;
+    M41 = num26 * num27;
+    M12 = (float)-((double)num2 * (double)num17 - (double)num3 * (double)num18 + (double)num4 * (double)num19) * num27;
+    M22 = (float)((double)num1 * (double)num17 - (double)num3 * (double)num20 + (double)num4 * (double)num21) * num27;
+    M32 = (float)-((double)num1 * (double)num18 - (double)num2 * (double)num20 + (double)num4 * (double)num22) * num27;
+    M42 = (float)((double)num1 * (double)num19 - (double)num2 * (double)num21 + (double)num3 * (double)num22) * num27;
+    float num28 = (float)((double)num7 * (double)num16 - (double)num8 * (double)num15);
+    float num29 = (float)((double)num6 * (double)num16 - (double)num8 * (double)num14);
+    float num30 = (float)((double)num6 * (double)num15 - (double)num7 * (double)num14);
+    float num31 = (float)((double)num5 * (double)num16 - (double)num8 * (double)num13);
+    float num32 = (float)((double)num5 * (double)num15 - (double)num7 * (double)num13);
+    float num33 = (float)((double)num5 * (double)num14 - (double)num6 * (double)num13);
+    M13 = (float)((double)num2 * (double)num28 - (double)num3 * (double)num29 + (double)num4 * (double)num30) * num27;
+    M23 = (float)-((double)num1 * (double)num28 - (double)num3 * (double)num31 + (double)num4 * (double)num32) * num27;
+    M33 = (float)((double)num1 * (double)num29 - (double)num2 * (double)num31 + (double)num4 * (double)num33) * num27;
+    M43 = (float)-((double)num1 * (double)num30 - (double)num2 * (double)num32 + (double)num3 * (double)num33) * num27;
+    float num34 = (float)((double)num7 * (double)num12 - (double)num8 * (double)num11);
+    float num35 = (float)((double)num6 * (double)num12 - (double)num8 * (double)num10);
+    float num36 = (float)((double)num6 * (double)num11 - (double)num7 * (double)num10);
+    float num37 = (float)((double)num5 * (double)num12 - (double)num8 * (double)num9);
+    float num38 = (float)((double)num5 * (double)num11 - (double)num7 * (double)num9);
+    float num39 = (float)((double)num5 * (double)num10 - (double)num6 * (double)num9);
+    M14 = (float)-((double)num2 * (double)num34 - (double)num3 * (double)num35 + (double)num4 * (double)num36) * num27;
+    M24 = (float)((double)num1 * (double)num34 - (double)num3 * (double)num37 + (double)num4 * (double)num38) * num27;
+    M34 = (float)-((double)num1 * (double)num35 - (double)num2 * (double)num37 + (double)num4 * (double)num39) * num27;
+    M44 = (float)((double)num1 * (double)num36 - (double)num2 * (double)num38 + (double)num3 * (double)num39) * num27;
+}
+
 float _3DRadSpaceDll::Matrix::Determinant(Matrix* m)
 {
     return m->Determinant();
@@ -105,17 +165,45 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateTranslation(const Vector3 &
 
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateRotationX(float radians)
 {
-    return Matrix();
+    Matrix result;
+
+    float val1 = cosf(radians);
+    float val2 = sinf(radians);
+
+    result.M22 = val1;
+    result.M23 = val2;
+    result.M32 = -val2;
+    result.M33 = val1;
+    
+    return result;
 }
 
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateRotationY(float radians)
 {
-    return Matrix();
+    Matrix result;
+    float val1 = cosf(radians);
+    float val2 = sinf(radians);
+
+    result.M11 = val1;
+    result.M13 = -val2;
+    result.M31 = val2;
+    result.M33 = val1;
+
+    return result;
 }
 
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateRotationZ(float radians)
 {
-    return Matrix();
+    Matrix result;
+    float val1 = cosf(radians);
+    float val2 = sinf(radians);
+
+    result.M11 = val1;
+    result.M12 = val2;
+    result.M21 = -val2;
+    result.M22 = val1;
+
+    return result;
 }
 
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateScale(float scalar)
@@ -340,4 +428,33 @@ float _3DRadSpaceDll::Matrix::operator[](const int &index)
 
         default: return NAN;
     }
+}
+
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateShadow(const Vector3 &lightDirection, const Plane &plane )
+{
+    Matrix result;
+    float dot = (plane.Normal.X * lightDirection.X) + (plane.Normal.Y * lightDirection.Y) + (plane.Normal.Z * lightDirection.Z);
+    float x = -plane.Normal.X;
+    float y = -plane.Normal.Y;
+    float z = -plane.Normal.Z;
+    float d = -plane.Distance;
+
+    result.M11 = (x * lightDirection.X) + dot;
+    result.M12 = x * lightDirection.Y;
+    result.M13 = x * lightDirection.Z;
+    result.M14 = 0;
+    result.M21 = y * lightDirection.X;
+    result.M22 = (y * lightDirection.Y) + dot;
+    result.M23 = y * lightDirection.Z;
+    result.M24 = 0;
+    result.M31 = z * lightDirection.X;
+    result.M32 = z * lightDirection.Y;
+    result.M33 = (z * lightDirection.Z) + dot;
+    result.M34 = 0;
+    result.M41 = d * lightDirection.X;
+    result.M42 = d * lightDirection.Y;
+    result.M43 = d * lightDirection.Z;
+    result.M44 = dot;
+
+    return result;
 }

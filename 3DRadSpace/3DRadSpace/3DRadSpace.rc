@@ -54,6 +54,18 @@ END
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "C:\\Users\\NicusorN5\\Desktop\\3DRadSpace\\Icon.ico"
 
+IDI_ICON2               ICON                    "C:\\Users\\NicusorN5\\Downloads\\openicon.ico"
+
+IDI_ICON3               ICON                    "C:\\Users\\NicusorN5\\Downloads\\saveicon.ico"
+
+IDI_ICON4               ICON                    "C:\\Users\\NicusorN5\\Downloads\\newicon.ico"
+
+IDI_ICON5               ICON                    "C:\\Users\\NicusorN5\\Downloads\\Debug-Button.ico"
+
+IDI_ICON6               ICON                    "C:\\Users\\NicusorN5\\Downloads\\compile_icon.ico"
+
+IDI_ICON7               ICON                    "C:\\Users\\NicusorN5\\Downloads\\switch2d_icon.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -79,7 +91,7 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "3DRadSpace"
             VALUE "FileVersion", "1.0.0.0"
-            VALUE "InternalName", "3DRadSpa.exe"
+            VALUE "InternalName", "3DRadSpace.exe"
             VALUE "LegalCopyright", "Copyright (C) 2020"
             VALUE "OriginalFilename", "3DRadSpace.exe"
             VALUE "ProductName", "3DRadSpace"
@@ -91,14 +103,6 @@ BEGIN
         VALUE "Translation", 0x409, 1200
     END
 END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// PNG
-//
-
-IDB_PNG1                PNG                     "C:\\Users\\NicusorN5\\Desktop\\3DRadSpace\\Debug-Button.png"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

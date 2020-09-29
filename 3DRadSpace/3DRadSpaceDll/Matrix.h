@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include <exception>
 #include "Vector3.h"
+#include "Plane.h"
 namespace _3DRadSpaceDll
 {
 	struct __declspec(dllexport) Vector3;
@@ -26,17 +27,23 @@ namespace _3DRadSpaceDll
 			M21(m[1][0]), M22(m[1][1]), M23(m[1][2]), M24(m[1][3]),
 			M31(m[2][0]), M32(m[2][1]), M33(m[2][2]), M34(m[2][3]),
 			M41(m[3][0]), M42(m[3][1]), M43(m[3][2]), M44(m[3][3]) {};
+		
 		float Determinant();
+		void Invert();
+
+		//static f(x)'s
 		static float Determinant(Matrix* m);
 
-		Matrix CreateLookAt(const Vector3 &CameraPos,const Vector3 &CameraLookAt,const Vector3 &Up);
-		Matrix CreateProjectionFieldOfView(float FOVradians, float aspect_ratio, float nearPlaneD, float farPlaneD);
-		Matrix CreateTranslation(const Vector3 &tr);
-		Matrix CreateRotationX(float radians);
-		Matrix CreateRotationY(float radians);
-		Matrix CreateRotationZ(float radians);
-		Matrix CreateScale(float scalar);
-		Matrix CreateScale(const Vector3 &scale);
+		static Matrix CreateLookAt(const Vector3 &CameraPos,const Vector3 &CameraLookAt,const Vector3 &Up);
+		static Matrix CreateProjectionFieldOfView(float FOVradians, float aspect_ratio, float nearPlaneD, float farPlaneD);
+		static Matrix CreateTranslation(const Vector3 &tr);
+		static Matrix CreateRotationX(float radians);
+		static Matrix CreateRotationY(float radians);
+		static Matrix CreateRotationZ(float radians);
+		static Matrix CreateScale(float scalar);
+		static Matrix CreateScale(const Vector3 &scale);
+
+		static Matrix CreateShadow(const Vector3 &lightDirection, const Plane &plane);
 
 		//scalar operators
 		Matrix operator*(const float &scalar);

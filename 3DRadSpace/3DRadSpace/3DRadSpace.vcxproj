@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -154,14 +154,18 @@
   <ItemGroup>
     <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Debug-Button.png" />
     <Image Include="..\..\..\..\..\Desktop\3DRadSpace\Icon.ico" />
+    <Image Include="..\..\..\..\..\desktop\3dradspace\icon2.ico" />
+    <Image Include="..\..\..\..\..\Downloads\compile_icon.ico" />
+    <Image Include="..\..\..\..\..\Downloads\Debug-Button.ico" />
+    <Image Include="..\..\..\..\..\Downloads\newicon.ico" />
+    <Image Include="..\..\..\..\..\Downloads\openicon.ico" />
+    <Image Include="..\..\..\..\..\Downloads\saveicon.ico" />
+    <Image Include="..\..\..\..\..\Downloads\switch2d_icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3DRadSpaceDll\3DRadSpaceDll.vcxproj">
       <Project>{6ede19fb-a66c-4cf9-afdb-809548dab531}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SimpleTextured.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

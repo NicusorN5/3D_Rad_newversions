@@ -3,19 +3,22 @@
 #include <d3d.h>
 #include <d3d9.h>
 #include "Vector3.h"
+#include "Quaternion.h"
+#include "IGameObject.h"
 
 namespace _3DRadSpaceDll
 {
-	class __declspec(dllexport) GameObject
+	/*
+	 Base class for all `game-objects` in 3DRadSpace
+	*/
+	class __declspec(dllexport) GameObject : public IGameObject
 	{
 	public:
-		GameObject() : Name(nullptr), Enabled(false),Position(0) {};
+		GameObject() : Name(nullptr), Enabled(false),Position(0),Rotation(),Scale(1) {};
 		char* Name;
 		bool Enabled;
 		Vector3 Position;
-		void a()
-		{
-
-		}
+		Quaternion Rotation;
+		Vector3 Scale;
 	};
 }
