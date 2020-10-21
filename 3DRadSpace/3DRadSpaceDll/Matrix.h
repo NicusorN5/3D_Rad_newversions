@@ -40,6 +40,7 @@ namespace _3DRadSpaceDll
 		static Matrix CreateRotationX(float radians);
 		static Matrix CreateRotationY(float radians);
 		static Matrix CreateRotationZ(float radians);
+		static Matrix CreateFromEulerAngles(const Vector3& angl);
 		static Matrix CreateScale(float scalar);
 		static Matrix CreateScale(const Vector3 &scale);
 

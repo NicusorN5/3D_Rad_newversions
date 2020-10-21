@@ -12,6 +12,8 @@ HBRUSH window_color_brush = nullptr;
 HWND hObjectsList = nullptr;
 HWND hToolbar = nullptr;
 
+
+
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
 	LPCWSTR className = L"3DRSP_MAIN";
@@ -200,6 +202,14 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     Viewport.Height = 600;
     DeviceContext->RSSetViewports(1, &Viewport);
 
+    ID3D11BlendState* g_pBlendStateNoBlend = NULL;
+
+    D3D11_BLEND_DESC BlendState;
+    ZeroMemory(&BlendState, sizeof(D3D11_BLEND_DESC));
+    BlendState.RenderTarget[0].BlendEnable = TRUE;
+    BlendState.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+    Device->CreateBlendState(&BlendState, &g_pBlendStateNoBlend);
+
     float ClearColor[4] = { 0,0,0,1 };
 
     if (renderTarget == nullptr)
@@ -228,8 +238,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         }
         //DeviceContext->Begin(query);
         DeviceContext->ClearRenderTargetView(renderTarget, ClearColor);
-        
-        
         
         //DeviceContext->End(query);
         SwapChain->Present(1, 0);

@@ -206,10 +206,16 @@ _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateRotationZ(float radians)
     return result;
 }
 
+_3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateFromEulerAngles(const Vector3& angl)
+{
+    return Matrix::CreateRotationZ(angl.Z) * Matrix::CreateRotationY(angl.Y) * Matrix::CreateRotationX(angl.X);
+}
+
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateScale(float scalar)
 {
     Matrix a;
     a *= scalar;
+    a.M44 = 1;
     return a;
 }
 

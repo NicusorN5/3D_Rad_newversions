@@ -2,7 +2,9 @@
 #include <windows.h>
 #include <CommCtrl.h>
 #include "3DRadSpaceDll_h/Game.h"
+#include "3DRadSpaceDll_h/GameObject.h"
 #include "resource.h"
+#include <vector>
 
 #define MENUF_NEWPROJ 1
 #define MENUF_OPENPROJ 2
@@ -37,6 +39,8 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 extern HWND MainWindow;
 extern HWND DrawWindow;
 extern _3DRadSpaceDll::Game *Game;
+
+extern std::vector<_3DRadSpaceDll::GameObject> Objects;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd);
 void ResizeWindow();

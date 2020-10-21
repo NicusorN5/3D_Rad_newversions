@@ -13,15 +13,5 @@ namespace _3DRadSpaceDll
 		Script_LUA,
 		Skinmesh,
 	};
-
-	class __declspec(dllexport) Main
-	{
-	private:
-		std::vector<GameObject*> _objects;
-	public:
-		void AddObject(GameObject* object);
-		void RemoveObject(size_t index);
-		GameObject* FindObject(size_t index);
-	};
 }
 

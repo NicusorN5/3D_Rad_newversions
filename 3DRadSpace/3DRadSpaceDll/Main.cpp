@@ -1,21 +1,6 @@
 #include "pch.h"
 #include "Main.h"
 
-void _3DRadSpaceDll::Main::AddObject(GameObject* object)
-{
-    _objects.push_back(object);
-}
-
-void _3DRadSpaceDll::Main::RemoveObject(size_t index)
-{
-    _objects.erase(_objects.begin() - (index-1));
-}
-
-_3DRadSpaceDll::GameObject* _3DRadSpaceDll::Main::FindObject(size_t index)
-{
-    return _objects[index];
-}
-
 BOOL WINAPI DllMain(
     HINSTANCE hinstDLL,  // handle to DLL module
     DWORD fdwReason,     // reason for calling function
