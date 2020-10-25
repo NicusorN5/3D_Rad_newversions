@@ -9,7 +9,7 @@
 namespace _3DRadSpaceDll
 {
 	/*
-	Base class for all `game-objects` in 3DRadSpace
+	 Base class for all `game-objects` in 3DRadSpace
 	*/
 	class __declspec(dllexport) GameObject : public IGameObject
 	{

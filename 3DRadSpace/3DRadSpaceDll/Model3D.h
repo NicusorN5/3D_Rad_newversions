@@ -13,7 +13,7 @@
 
 namespace _3DRadSpaceDll
 {
-	class Model3D
+	class __declspec(dllexport) Model3D
 	{
 	public:
 		Mesh** Meshes;
@@ -22,7 +22,9 @@ namespace _3DRadSpaceDll
 		/*
 		Loads a 3D model without supporting 3D animations.
 		*/
-		Model3D* FromFileBasic(char* file);
+		bool InitializeFromFileBasic(char* file);
+
+		void Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context);
 	};
 }
 

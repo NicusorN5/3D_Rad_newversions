@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "Model3D.h"
 
-_3DRadSpaceDll::Model3D* _3DRadSpaceDll::Model3D::FromFileBasic(char* file)
+bool _3DRadSpaceDll::Model3D::InitializeFromFileBasic(char* file)
 {
     Assimp::Importer imp;
     aiScene *scene = (aiScene*)imp.ReadFile(file, aiProcess_Triangulate | aiProcess_FlipUVs);
     
-    if (scene == nullptr) return nullptr;
+    if (scene == nullptr) return false;
 
     this->Meshes = _newdp<Mesh>(scene->mNumMeshes);
 
@@ -33,5 +33,16 @@ _3DRadSpaceDll::Model3D* _3DRadSpaceDll::Model3D::FromFileBasic(char* file)
             memcpy_s(this->Meshes[i]->Parts[j]->Indicies, numind * sizeof(int), scene->mMeshes[i]->mFaces[j].mIndices, numind * sizeof(int));
         }
     }
-    return new Model3D();
+    return true;
+}
+
+void _3DRadSpaceDll::Model3D::Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context)
+{
+    for (int i = 0; i < NumMeshes; i++)
+    {
+        for (int j = 0; j < Meshes[i]->PartsNum; i++)
+        {
+            Meshes[i]->Parts[j]->Draw(world, view, projection, context);
+        }
+    }
 }

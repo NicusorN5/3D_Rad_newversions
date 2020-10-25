@@ -25,7 +25,7 @@ namespace _3DRadSpaceDll
 		Vector3 Normal;
 		Vector2 UV;
 	};
-	class MeshPart
+	class _declspec(dllexport) MeshPart
 	{
 		ID3D11Buffer *_buffer;
 		ID3D11Buffer* _vertexbuffer;

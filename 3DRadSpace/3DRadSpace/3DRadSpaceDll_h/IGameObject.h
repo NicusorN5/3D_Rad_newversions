@@ -7,7 +7,7 @@ namespace _3DRadSpaceDll
 		virtual char* Save() = 0;
 		virtual void* Load(char* buffer, size_t req_size) = 0;
 		virtual void Draw() = 0;
-		virtual void Update() = 0;
+		virtual void Update(float dt) = 0;
 		virtual ~IGameObject() {};
 	};
 }
