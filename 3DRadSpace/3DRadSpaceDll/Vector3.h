@@ -2,6 +2,7 @@
 #include <math.h>
 #include <DirectXMath.h>
 #include "Matrix.h"
+#include <istream>
 namespace _3DRadSpaceDll
 {
 	struct __declspec(dllexport) Matrix;
@@ -55,5 +56,10 @@ namespace _3DRadSpaceDll
 		void Transform(const Matrix &m);
 
 		const Vector3& operator =(const Vector3& v) const;
+
+		friend std::istream& operator>>(std::istream& in, const Vector3& vec);
+		friend std::ostream& operator<<(std::ostream& out, const Vector3& vec);
 	};
+	std::istream& operator>>(std::istream& in, const Vector3& vec);
+	std::ostream& operator<<(std::ostream& out, const Vector3& vec);
 }

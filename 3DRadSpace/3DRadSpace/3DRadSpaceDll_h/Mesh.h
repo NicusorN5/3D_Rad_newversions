@@ -2,7 +2,7 @@
 #include "MeshPart.h"
 namespace _3DRadSpaceDll
 {
-	class Mesh
+	class _declspec(dllexport) Mesh
 	{
 	public:
 		MeshPart** Parts;

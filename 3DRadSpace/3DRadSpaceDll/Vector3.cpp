@@ -157,3 +157,15 @@ const _3DRadSpaceDll::Vector3& _3DRadSpaceDll::Vector3::operator=(const Vector3&
 {
     return Vector3(v.X, v.Y, v.Z);
 }
+
+std::istream& _3DRadSpaceDll::operator>>(std::istream& in, const Vector3& vec)
+{
+    in >> vec.X >> vec.Y >> vec.Z;
+    return in;
+}
+
+std::ostream& _3DRadSpaceDll::operator<<(std::ostream& out, const Vector3& vec)
+{
+    out << vec.X << vec.Y << vec.Z;
+    return out;
+}

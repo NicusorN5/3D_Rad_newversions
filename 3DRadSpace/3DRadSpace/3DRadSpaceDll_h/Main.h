@@ -1,17 +1,16 @@
 #pragma once
 #include <vector>
-#include "GameObject.h"
+#include "Camera.h"
+#include <d3d11.h>
 
 namespace _3DRadSpaceDll
 {
-	enum GameObjectType : size_t
+	class __declspec(dllexport) ObjectManager
 	{
-		Unknown,
-		Baseclass_Gameobject,
-		Camera,
-		Script_CS,
-		Script_LUA,
-		Skinmesh,
+	public:
+		static void InitializeObjects(std::vector<GameObject*>* arr, ID3D11Device* dev, ID3D11DeviceContext* context);
+		static void DrawObjects(std::vector<GameObject*>* arr);
+		static void UpdateObjects(std::vector<GameObject*>* arr,float dt);
 	};
 }
 

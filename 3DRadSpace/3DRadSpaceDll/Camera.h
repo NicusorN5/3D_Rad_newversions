@@ -17,12 +17,20 @@ namespace _3DRadSpaceDll
 		float NearPlaneDistance;
 		float FarPlaneDistance;
 
-		Camera() = delete;
+		//Camera() = delete;
 
-		Camera(char* name, bool enabled, Vector3 pos, Vector3 rotation, Vector3 up, float aspect_ratio, float FOV, float near_d, float far_d);
+		Camera(char* name, bool enabled,const Vector3 &pos,const Vector3 &rotation,const Vector3 &up, float aspect_ratio, float fov, float near_d, float far_d);
 		
+		void Initialize(ID3D11Device* dev, ID3D11DeviceContext* context) override;
+
 		void Update(float dt) override;
+
+		void Draw() override;
 	
+		~Camera();
+
+		friend std::istream& operator >>(std::istream& in, const Camera& cam);
+		friend std::ostream& operator <<(std::ostream& out, const Camera& cam);
 	};
 }
 

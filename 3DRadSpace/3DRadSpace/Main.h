@@ -2,9 +2,11 @@
 #include <windows.h>
 #include <CommCtrl.h>
 #include "3DRadSpaceDll_h/Game.h"
-#include "3DRadSpaceDll_h/GameObject.h"
+#include "3DRadSpaceDll_h/Camera.h"
+#include "3DRadSpaceDll_h/Math.h"
 #include "resource.h"
 #include <vector>
+#include <tchar.h>
 
 #define MENUF_NEWPROJ 1
 #define MENUF_OPENPROJ 2
@@ -40,7 +42,19 @@ extern HWND MainWindow;
 extern HWND DrawWindow;
 extern _3DRadSpaceDll::Game *Game;
 
-extern std::vector<_3DRadSpaceDll::GameObject> Objects;
+extern std::vector<_3DRadSpaceDll::GameObject*> Objects;
+
+extern _3DRadSpaceDll::Camera *Camera;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd);
+
 void ResizeWindow();
+BOOL DirectoryExists(LPCTSTR szPath);
+void CreateDirectoryIfExists(LPCWSTR path);
+
+void SaveProject();
+void SaveProjectAs();
+void SaveProjectFile(wchar_t* file);
+void CreateProjectsFolder();
+
+constexpr const wchar_t* OPN_FILTER_PROJECT = L"3DRadSpace Project (*.3drsp)\0*.3drsp\0Text files(*.txt)\0*.txt";

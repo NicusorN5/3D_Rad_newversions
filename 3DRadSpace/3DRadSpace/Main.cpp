@@ -12,10 +12,18 @@ HBRUSH window_color_brush = nullptr;
 HWND hObjectsList = nullptr;
 HWND hToolbar = nullptr;
 
+HINSTANCE hCrtInstance;
 
+std::vector<_3DRadSpaceDll::GameObject*> Objects;
+_3DRadSpaceDll::Camera* Camera;
+
+wchar_t LastFile[255];
+bool Saved = true;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nShowCmd)
 {
+    hCrtInstance = hInstance;
+
 	LPCWSTR className = L"3DRSP_MAIN";
 	WNDCLASS WindowClass = { 0 };
 	WindowClass.lpszClassName = className;
@@ -106,7 +114,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
         { 1, MENUF_OPENPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Open"},
         { 2, MENUF_SAVEPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Save"},
         { 3, MENUF_PLAY, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Play"},
-        { 4, MENUF_SAVEPROJ, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Compile"},
+        { 4, MENUF_COMPILE, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Compile"},
         { 5, TOOLB_SW2D, TBSTATE_ENABLED, BTNS_BUTTON | BTNS_AUTOSIZE, {0}, 0, (INT_PTR)L"Switch 2D/3D"}
     };
 
@@ -123,7 +131,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     
     ResizeWindow();
 
+    CreateProjectsFolder();
+
     Game = new _3DRadSpaceDll::Game(DrawWindow);
+    Camera = new _3DRadSpaceDll::Camera((char*)"EditorCamera", true, _3DRadSpaceDll::Vector3(0, 1, 1), _3DRadSpaceDll::Vector3(0), _3DRadSpaceDll::Vector3(0, 1, 0), 800.0f / 600.0f, _3DRadSpaceDll::Math::ToRadians(45.0f), 0.01f, 500.0f);
 
     ID3D11Device* Device = Game->GetDevice();
     IDXGISwapChain* SwapChain = Game->GetSwapChain();
@@ -335,16 +346,49 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         switch (LOWORD(wParam))
         {
-        //File -> ...
+            //File -> ...
         case MENUF_NEWPROJ:
+            Objects.clear();
             break;
         case MENUF_OPENPROJ:
+        {
+            wchar_t dir[260];
+            wchar_t file[260];
+            ZeroMemory(dir, 260);
+            ZeroMemory(file, 260);
+
+            OPENFILENAME openproj;
+            memset(&openproj, 0, sizeof(openproj));
+
+            openproj.lStructSize = sizeof(openproj);
+            openproj.hwndOwner = MainWindow;
+            openproj.lpstrFilter = OPN_FILTER_PROJECT;
+            openproj.lpstrTitle = L"Open a 3DRadSpace project...";
+            openproj.nMaxFile = MAX_PATH;
+            openproj.lpstrFile = file;
+
+            GetCurrentDirectory(MAX_PATH, dir);
+            lstrcat(dir, L"\\Projects\\");
+
+            openproj.lpstrInitialDir = dir;
+            openproj.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+            if (GetOpenFileName(&openproj))
+            {
+                MessageBox(nullptr, file, L"Aaand the selected file is:", MB_OK | MB_ICONINFORMATION);
+            }
             break;
+        }
         case MENUF_SAVEPROJ:
+            SaveProject();
             break;
         case MENUF_SAVEPROJAS:
+        {
+            SaveProjectAs();
             break;
+        }
         case MENUF_PLAY:
+            
             break;
         case MENUF_COMPILE:
             break;
@@ -362,6 +406,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         case MENUO_SETTINGS:
             break;
         case MENUO_CHECKFORUPDATE:
+            break;
+        case MENUH_ABOUT:
+            break;
+        case MENUH_DOCS:
+            ShellExecute(MainWindow, nullptr, L"https://3dradspace.tk/Wiki", nullptr, nullptr, SW_SHOWNORMAL);
+            break;
+        case MENUH_FORUM:
+            ShellExecute(MainWindow, nullptr, L"https://3dradspace.tk/Forum", nullptr, nullptr, SW_SHOWNORMAL);
+            break;
+        case MENUH_REPORTBUG:
+            //todo: propably insert github link?
+            ShellExecute(MainWindow, nullptr, L"https://3dradspace.tk/Forum/index.php?board=9.0", nullptr, nullptr, SW_SHOWNORMAL);
+            break;
+        case MENUH_WEBSITE:
+            ShellExecute(nullptr, nullptr, L"https://3dradspace.tk/", nullptr, nullptr, SW_SHOWNORMAL);
             break;
 
         //Edit -> ...
@@ -385,4 +444,68 @@ void ResizeWindow()
     SetWindowPos(hObjectsList, (HWND)0, 0, 29, 150, height - 25, SWP_SHOWWINDOW);
     SetWindowPos(DrawWindow, (HWND)0, 150, 29, width - 150, height, SWP_SHOWWINDOW);
     SetWindowPos(hToolbar, (HWND)0, 0, 0, width, 30, SWP_SHOWWINDOW);
+}
+
+BOOL DirectoryExists(LPCTSTR szPath)
+{
+    DWORD dwAttrib = GetFileAttributes(szPath);
+
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
+        (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+void CreateDirectoryIfExists(LPCWSTR path)
+{
+    if (!DirectoryExists(path)) CreateDirectory(path,nullptr);
+}
+
+void SaveProject()
+{
+    if (lstrlen(LastFile) > 0) SaveProjectFile(LastFile);
+    else SaveProjectAs();
+}
+
+void SaveProjectAs()
+{
+    wchar_t file[MAX_PATH];
+    ZeroMemory(file, MAX_PATH);
+
+    wchar_t dir[MAX_PATH];
+    ZeroMemory(dir, MAX_PATH);
+
+    GetCurrentDirectory(MAX_PATH, dir);
+    lstrcat(dir, L"\\Projects\\");
+
+    OPENFILENAME opn;
+    memset(&opn, 0, sizeof(opn));
+
+    opn.lStructSize = sizeof(opn);
+    opn.lpstrFile = file;
+    opn.nMaxFile = MAX_PATH;
+    opn.hwndOwner = MainWindow;
+    opn.lpstrFilter = OPN_FILTER_PROJECT;
+    opn.lpstrInitialDir = dir;
+    opn.lpstrTitle = L"Save a 3DRadSpace project...";
+    opn.Flags = OFN_OVERWRITEPROMPT | OFN_EXPLORER;
+
+    if (GetSaveFileName(&opn))
+    {
+        SaveProjectFile(file);
+        memcpy_s(LastFile,MAX_PATH, file, MAX_PATH);
+        MessageBox(nullptr, L"Saved stuff", L"OK", MB_OK);
+    }
+}
+
+void SaveProjectFile(wchar_t* path)
+{
+    Saved = true;
+    //TODO: Insert code that saves the file
+}
+
+void CreateProjectsFolder()
+{
+    wchar_t dir[255];
+    GetCurrentDirectory(255, dir);
+    lstrcat(dir, L"\\Projects\\");
+    CreateDirectoryIfExists(dir);
 }

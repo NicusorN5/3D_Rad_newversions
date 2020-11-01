@@ -13,8 +13,10 @@ namespace _3DRadSpaceDll
 	*/
 	class __declspec(dllexport) GameObject : public IGameObject
 	{
+		ID3D11Device* _device;
+		ID3D11DeviceContext *_devcontext;
 	public:
-		GameObject() : Name(nullptr), Enabled(false),Position(0),Rotation(),Scale(1) {};
+		GameObject() : Name(nullptr), Enabled(false),Position(0),Rotation(),Scale(1),_device(nullptr),_devcontext(nullptr) {};
 		char* Name;
 		bool Enabled;
 		Vector3 Position;

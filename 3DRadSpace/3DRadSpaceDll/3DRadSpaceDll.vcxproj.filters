@@ -88,6 +88,12 @@
     <ClInclude Include="MemoryStuff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CSharpEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ByteStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -142,6 +148,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Vector2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CSharpEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ByteStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

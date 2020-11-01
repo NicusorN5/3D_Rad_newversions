@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Ray.h"
 
-//https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
 _3DRadSpaceDll::Vector3* _3DRadSpaceDll::Ray::IntersectsTriangle(const Triangle& triangle)
 {
     Vector3* ret = nullptr;
