@@ -436,6 +436,11 @@ float _3DRadSpaceDll::Matrix::operator[](const int &index)
     }
 }
 
+_3DRadSpaceDll::Matrix::operator DirectX::XMMATRIX()
+{
+    return DirectX::XMMATRIX(M11, M12, M13, M14, M21, M22, 23, M24, M31, M32, M33, M34, M41, M42, M43, M44);
+}
+
 _3DRadSpaceDll::Matrix _3DRadSpaceDll::Matrix::CreateShadow(const Vector3 &lightDirection, const Plane &plane )
 {
     Matrix result;

@@ -60,6 +60,8 @@ namespace _3DRadSpaceDll
 		Matrix operator *=(const Matrix &m);
 
 		float operator[](const int &index);
+
+		operator DirectX::XMMATRIX();
 	};
 };
 

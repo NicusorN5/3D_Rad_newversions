@@ -14,26 +14,42 @@ bool _3DRadSpaceDll::Model3D::InitializeFromFileBasic(char* file)
     for (int i = 0; i < scene->mNumMeshes; i++)
     {
         const size_t s_vertexbuff = sizeof(Vector3) * scene->mMeshes[i]->mNumVertices;
-        for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
+        this->Meshes[i]->Parts = _newdp<MeshPart>(scene->mNumMeshes);
+        for (size_t j = 0; j < scene->mNumMeshes; j++)
         {
-            this->Meshes[i]->Parts = _newdp<MeshPart>(scene->mMeshes[i]->mFaces[j].mNumIndices);
+            this->Meshes[i]->Parts[j]->Buffer = new Vector3[s_vertexbuff / sizeof(Vector3)];
+            this->Meshes[i]->Parts[j]->BuffSize = s_vertexbuff / sizeof(Vector3);
             memcpy_s(this->Meshes[i]->Parts[j]->Buffer, s_vertexbuff, scene->mMeshes[i]->mVertices, s_vertexbuff);
         }
         
         //initialize index buffers
 
-        for (size_t j = 0; j < scene->mMeshes[i]->mNumFaces; j++)
+        for (size_t j = 0; j < scene->mNumMeshes; j++)
         {
             size_t numind = scene->mMeshes[i]->mFaces[j].mNumIndices;
 
             this->Meshes[i]->Parts[j]->Indicies = new int[numind];
 
-            this->Meshes[i]->Parts[j]->Size = numind;
+            this->Meshes[i]->Parts[j]->IndSize = numind;
 
             memcpy_s(this->Meshes[i]->Parts[j]->Indicies, numind * sizeof(int), scene->mMeshes[i]->mFaces[j].mIndices, numind * sizeof(int));
         }
     }
     return true;
+}
+
+void _3DRadSpaceDll::Model3D::InitializeBuffers(ID3D11Device *gd)
+{
+    for (int i = 0; i < this->NumMeshes; i++)
+    {
+        for (int j = 0; j < this->Meshes[i]->PartsNum; i++)
+        {
+            for (int k = 0; k < this->Meshes[i]->PartsNum; k++)
+            {
+                this->Meshes[i]->Parts[j]->CreateBuffers(gd);
+            }
+        }
+    }
 }
 
 void _3DRadSpaceDll::Model3D::Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context)
@@ -45,4 +61,9 @@ void _3DRadSpaceDll::Model3D::Draw(Matrix world, Matrix view, Matrix projection,
             Meshes[i]->Parts[j]->Draw(world, view, projection, context);
         }
     }
+}
+
+_3DRadSpaceDll::Model3D::~Model3D()
+{
+    _deletedp<Mesh>(Meshes, NumMeshes);
 }

@@ -1,2 +1,2 @@
 #include "pch.h"
-#include "GameObject.h"
+#include "IGameObject.h"

@@ -13,10 +13,11 @@
 
 namespace _3DRadSpaceDll
 {
+	template <class T>
 	class __declspec(dllexport) Model3D
 	{
 	public:
-		Mesh** Meshes;
+		Mesh<T>** Meshes;
 		size_t NumMeshes;
 		Model3D(): Meshes(nullptr),NumMeshes(0) {};
 		/*
@@ -25,6 +26,8 @@ namespace _3DRadSpaceDll
 		bool InitializeFromFileBasic(char* file);
 
 		void Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context);
+
+		~Model3D();
 	};
 }
 

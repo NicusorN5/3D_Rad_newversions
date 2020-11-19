@@ -13,6 +13,7 @@
 
 namespace _3DRadSpaceDll
 {
+
 	class __declspec(dllexport) Model3D
 	{
 	public:
@@ -25,6 +26,8 @@ namespace _3DRadSpaceDll
 		bool InitializeFromFileBasic(char* file);
 
 		void Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context);
+
+		~Model3D();
 	};
 }
 

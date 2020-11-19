@@ -29,44 +29,26 @@ BOOL WINAPI DllMain(
     return TRUE;  // Successful DLL_PROCESS_ATTACH.
 }
 
-void _3DRadSpaceDll::ObjectManager::InitializeObjects(std::vector<GameObject*>* arr, ID3D11Device* dev, ID3D11DeviceContext* context)
+void _3DRadSpaceDll::ObjectManager::InitializeObjects(std::vector<IGameObject*>* arr, ID3D11Device* dev, ID3D11DeviceContext* context)
 {
-    for (int i = 0; i < arr->size(); i++)
+    for (unsigned i = 0; i < arr->size(); i++)
     {
-       std::string type = typeid(*arr->operator[](i)).name();
-       if (type.compare("class _3DRadSpaceDll::Camera*") == 0)
-       {
-           Camera* cam = dynamic_cast<Camera*>(arr->operator[](i));
-           cam->Initialize(dev, context);
-           continue;
-       }
+        arr->operator[](i)->Initialize(dev, context);
     }
 }
 
-void _3DRadSpaceDll::ObjectManager::DrawObjects(std::vector<GameObject*>* arr)
+void _3DRadSpaceDll::ObjectManager::DrawObjects(std::vector<IGameObject*>* arr)
 {
-    for (int i = 0; i < arr->size(); i++)
+    for (unsigned i = 0; i < arr->size(); i++)
     {
-        std::string type = typeid(*arr->operator[](i)).name();
-        if (type.compare("class _3DRadSpaceDll::Camera*") == 0)
-        {
-            Camera* cam = dynamic_cast<Camera*>(arr->operator[](i));
-            cam->Draw();
-            continue;
-        }
+        arr->operator[](i)->Draw();
     }
 }
 
-void _3DRadSpaceDll::ObjectManager::UpdateObjects(std::vector<GameObject*>* arr, float dt)
+void _3DRadSpaceDll::ObjectManager::UpdateObjects(std::vector<IGameObject*>* arr, float dt)
 {
-    for (int i = 0; i < arr->size(); i++)
+    for (unsigned i = 0; i < arr->size(); i++)
     {
-        std::string type = typeid(*arr->operator[](i)).name();
-        if (type.compare("class _3DRadSpaceDll::Camera*") == 0)
-        {
-            Camera* cam = dynamic_cast<Camera*>(arr->operator[](i));
-            cam->Update(dt);
-            continue;
-        }
+        arr->operator[](i)->Update(dt);
     }
 }

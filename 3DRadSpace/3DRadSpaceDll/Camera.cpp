@@ -37,7 +37,7 @@ void _3DRadSpaceDll::Camera::Draw()
 
 _3DRadSpaceDll::Camera::~Camera()
 {
-
+	//No dynamically allocated resources. Nothing to do. Bye.
 }
 
 std::istream& _3DRadSpaceDll::operator>>(std::istream& in, const _3DRadSpaceDll::Camera& cam)

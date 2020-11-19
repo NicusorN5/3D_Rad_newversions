@@ -61,7 +61,4 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="BasicColorVertexShader.hlsl" />
-  </ItemGroup>
 </Project>

@@ -25,6 +25,7 @@ namespace _3DRadSpaceDll
 		Vector3 Normal;
 		Vector2 UV;
 	};
+	template <class T>
 	class _declspec(dllexport) MeshPart
 	{
 		ID3D11Buffer *_buffer;
@@ -33,12 +34,15 @@ namespace _3DRadSpaceDll
 			void* Buffer;
 			int* Indicies;
 			size_t Size;
+			/*Creates a MeshPart containing a vertex buffer.*/
 			MeshPart(void* membuffer, int* ind, size_t s) : Buffer(membuffer), Indicies(ind), Size(s), _buffer(nullptr), _vertexbuffer(nullptr) {};
 			MeshPart() : Buffer(nullptr), Indicies(nullptr), Size(0), _buffer(nullptr), _vertexbuffer(nullptr) {};
 			
 			void CreateBuffers(ID3D11Device *gd);
 
 			void Draw(Matrix world,Matrix view,Matrix projection,ID3D11DeviceContext *context);
+
+			~MeshPart();
 	};
 }
 

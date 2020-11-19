@@ -1,9 +1,9 @@
 #pragma once
-#include "GameObject.h"
+#include "IGameObject.h"
 
 namespace _3DRadSpaceDll
 {
-	class __declspec(dllexport) Camera : public GameObject
+	class __declspec(dllexport) Camera : public IGameObject
 	{
 		Vector3 _rotation;
 	public:
