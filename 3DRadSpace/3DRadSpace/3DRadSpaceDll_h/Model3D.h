@@ -25,6 +25,8 @@ namespace _3DRadSpaceDll
 		*/
 		bool InitializeFromFileBasic(char* file);
 
+		void InitializeBuffers(ID3D11Device *gd);
+
 		void Draw(Matrix world, Matrix view, Matrix projection, ID3D11DeviceContext* context);
 
 		~Model3D();

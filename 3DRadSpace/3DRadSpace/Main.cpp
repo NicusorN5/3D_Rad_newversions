@@ -259,6 +259,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		MessageBox(nullptr, L"Error loading file EngineData\\Axis.x", L"Error loading resource", MB_OK | MB_ICONERROR);
 		return 1;
 	}
+	AxisModel.InitializeBuffers(Device);
 
 	ID3DBlob* basicVShaderBlob = nullptr;
 	D3DReadFileToBlob(L"BasicVertexShader.cso", &basicVShaderBlob);

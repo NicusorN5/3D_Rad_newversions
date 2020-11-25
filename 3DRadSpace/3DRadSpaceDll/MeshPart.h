@@ -29,6 +29,8 @@ namespace _3DRadSpaceDll
 	{
 		ID3D11Buffer *_buffer;
 		ID3D11Buffer* _vertexbuffer;
+		size_t* _stride;
+		size_t* _offset;
 		public:
 			void* Buffer;
 			int* Indicies;

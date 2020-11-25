@@ -39,7 +39,7 @@ float _3DRadSpaceDll::Vector3::Dot(const Vector3 &v)
 
 float _3DRadSpaceDll::Vector3::Dot(const Vector3 &a,const Vector3 &b)
 {
-    return 0.0f;
+    return a.X * b.X + a.Y * b.Y + a.Z * b.Z;
 }
 
 void _3DRadSpaceDll::Vector3::Cross(const Vector3 &v)
